@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% for message in app.flashes('notice') %}
+        <div class="flash-notice">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="product-container">
+        <h1>{{ product.name }}</h1>
+
+        &euro; <span class="price">{{ product.price|number_format(2, ',', '.') }}</span> p/s
+
+        {{ form_start(form, {'attr':{'data-price':product.price} }) }}
+            {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+        /*
+         * number_format functie voor javascript https://gist.github.com/rd13/3924792
+         */
+        String.prototype.number_format = function(d) {
+            var n = this;
+            var c = isNaN(d = Math.abs(d)) ? 2 : d;
+            var s = n < 0 ? "-" : "";
+            var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+            return s + (j ? i.substr(0, j) + '.' : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + '.') + (c ? ',' + Math.abs(n - i).toFixed(c).slice(2) : "");
+        }     
+
+        $( document ).ready(function() {
+            $('.productoption').change(function() {
+                var container = $(this).closest('.product-container');
+                var form = $(this).closest('form');
+                var totalPrice = parseFloat(form.attr('data-price'));
+                
+                $(form.find('.productoption')).each(function() {
+                    var optionPrice = $(this).find(":selected").attr('data-price');
+                    
+                    if(typeof optionPrice !== typeof undefined && optionPrice !== false) {
+                        totalPrice += parseFloat(optionPrice);
+                    }                   
+                    
+                });
+                
+                container.find('span.price').text(totalPrice.toString().number_format());
+            });
+        });
+    </script>
+{% endblock %}

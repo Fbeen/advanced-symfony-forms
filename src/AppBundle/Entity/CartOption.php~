@@ -1,0 +1,48 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use AppBundle\Entity\ProductOption;
+
+/**
+ * CartOptions
+ *
+ * @ORM\Table(name="cart_options")
+ * @ORM\Entity
+ */
+class CartOption
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="CartItem", inversedBy="options")
+     * @ORM\JoinColumn(name="cartitem_id", referencedColumnName="id")
+     */
+    private $cartItem;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="ProductOption")
+     * @ORM\JoinColumn(name="option_id", referencedColumnName="id")
+     */
+    private $productOption;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="ProductOptionChoice")
+     * @ORM\JoinColumn(name="choice_id", referencedColumnName="id")
+     */
+    private $productOptionChoice;
+
+    
+    public function __construct(ProductOption $productOption)
+    {
+        $this->productOption = $productOption;
+    }
+}
